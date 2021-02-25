@@ -23,19 +23,47 @@ describe('Party Horn Tests', () => {
   });
 
   it('image and sound source change when party horn radio button is selected', () => {
-    cy.get('#audio-selection [type="radio"]').find(['radio-party-horn']).check();
-    cy.get('#sound-image').then( ($el) => { expect($el).to.have.attr('src', './assets/media/images/party.svg')});
+    cy.get('[id="radio-party-horn"]').check();
+    cy.get('#sound-image').then( ($el) => { expect($el).to.have.attr('src', './assets/media/images/party-horn.svg')});
     cy.get('#horn-sound').then( ($el) => { expect($el).to.have.attr('src', './assets/media/audio/party-horn.mp3')});
   });
 
-  it('test if volume-level-0 will display when volume is < ', () => {
-    cy.get('#volume-number').clear().type('0');
-    cy.get('#volume-image').then( ($el) => { expect($el).to.have.attr('src','./assets/media/icons/volume-level-0.svg')});
+  describe('volume image changes when increasing volumes', () => {
+    it('test if volume-level-0 will display when volume 0', () => {
+      cy.get('#volume-number').clear().type('0');
+      cy.get('#volume-image').then( ($el) => { expect($el).to.have.attr('src','./assets/media/icons/volume-level-0.svg')});
+    });
+
+    it('test if volume-level-1 will display when volume > 0 && < 34', () => {
+      cy.get('#volume-number').clear().type('30');
+      cy.get('#volume-image').then( ($el) => { expect($el).to.have.attr('src','./assets/media/icons/volume-level-1.svg')});
+    });
+
+    it('test if volume-level-2 will display when volume > 33 && < 67', () => {
+      cy.get('#volume-number').clear().type('50');
+      cy.get('#volume-image').then( ($el) => { expect($el).to.have.attr('src','./assets/media/icons/volume-level-2.svg')});
+    });
+
+    it('test if volume-level-3 will display when volume > 66', () => {
+      cy.get('#volume-number').clear().type('80');
+      cy.get('#volume-image').then( ($el) => { expect($el).to.have.attr('src','./assets/media/icons/volume-level-3.svg')});
+    });
   });
-/*
-  it('test if volume-level-1 will display when volume is > 0 but < 34', () => {
-    cy.get('#volume-number').clear().type('2');
-    cy.get('#volume-image').then( ($el) => { expect($el).to.have.attr('src','./assets/media/icons/volume-level-0.svg')});
+
+  describe('test if honk button is disabled when textbox input is empty or a non-number', () => {
+    it('textbox input is empty', () => {
+      cy.get('#volume-number').clear();
+      cy.get('#honk-btn').should('be.disabled');
+    });
+
+    it('textbox input is non-number', () => {
+      cy.get('#volume-number').clear().type('s');
+      cy.get('#honk-btn').should('be.disabled');
+    });
   });
-*/
+
+  it('An error is thrown when a number is outside of the given range in volume textbox input', () => {
+    cy.get('#volume-number').clear().type(102);
+    cy.get('input:invalid').should('be.enabled');
+  });
 });
